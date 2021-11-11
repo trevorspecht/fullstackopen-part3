@@ -28,6 +28,16 @@ app.get('/api/persons', (request, response) => {
     response.json(phonebook)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const found = phonebook.find(person => person.id === id)
+    
+    if (found) 
+        response.json(found)
+    else 
+        response.send(404).end()
+})
+
 app.get('/info', (request, response) => {
     const date = new Date(Date.now())
     response.send(
