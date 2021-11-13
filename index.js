@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+app.use(express.static('build'))
 app.use(morgan(
     ':method :url :status :res[content-length] - :response-time ms :body'
 ))
@@ -54,7 +55,7 @@ const generateId = () => {
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
-    
+    console.log('request: ', request.body, 'status: ', response.status)
     if(!body.name || body.name.length === 0){
         return response.status(400).json({ error: 'name missing' })
     }
