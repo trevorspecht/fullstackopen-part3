@@ -86,6 +86,14 @@ app.get('/info', (request, response) => {
     )
 })
 
+app.put('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const index = phonebook.findIndex(person => person.id === id)
+
+    phonebook[index].number = request.params.number
+    response.json(phonebook)
+})
+
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
   
