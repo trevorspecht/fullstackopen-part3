@@ -4,6 +4,7 @@ var cors = require('cors')
 const app = express()
 
 const Person = require('./models/person')
+const person = require('./models/person')
 
 app.use(cors())
 app.use(express.json())
@@ -24,16 +25,13 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
-    console.log('request: ', request.body, 'status: ', response.status)
+    console.log('request: ', request.body, 'status: ', response.status())
     if(!body.name || body.name.length === 0){
         return response.status(400).json({ error: 'name missing' })
     }
     else if(!body.number || body.number.length === 0){
         return response.status(400).json({ error: 'number missing' })
     }
-    // else if(phonebook.find(person => person.name === body.name)){
-    //     return response.status(400).json({ error: 'name must be unique' })
-    // }
 
     const person = new Person({
         name: body.name,
@@ -54,11 +52,10 @@ app.get('/info', (request, response) => {
 })
 
 app.put('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const index = phonebook.findIndex(person => person.id === id)
-
-    phonebook[index].number = request.params.number
-    response.json(phonebook)
+    Person.findById(request.params.id).then(person => {
+        Person.updateOne(person, { number: request.params.number })
+            .then(person => response.json(person))
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
