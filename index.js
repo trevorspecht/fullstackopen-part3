@@ -62,10 +62,11 @@ app.get('/info', (request, response) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-    Person.findById(request.params.id).then(person => {
-        Person.updateOne(person, { number: request.params.number })
-            .then(person => response.json(person))
+    Person.findByIdAndUpdate(request.params.id, { number: request.body.number }, { new: true })
+    .then(updatedPerson => {
+        response.json(updatedPerson)
     })
+    .catch(next)
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {  
