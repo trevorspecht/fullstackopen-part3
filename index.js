@@ -53,12 +53,16 @@ app.post('/api/persons', (request, response, next) => {
     .catch(next)
 })
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
     const date = new Date(Date.now())
-    response.send(
-        `<p>Phonebook has info for ${phonebook.length} people</p>
-        <p>${date}</p>`
-    )
+    Person.find({})
+    .then(phonebook => {
+        response.send(
+            `<p>Phonebook has info for ${phonebook.length} people</p>
+            <p>${date}</p>`
+        )
+    })
+    .catch(next)
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
