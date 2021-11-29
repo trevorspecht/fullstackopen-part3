@@ -4,11 +4,11 @@ var cors = require('cors')
 const app = express()
 
 const Person = require('./models/person')
-const person = require('./models/person')
 
+app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
-app.use(express.static('build'))
+
 
 
 app.get('/api/persons', (request, response) => {
@@ -18,8 +18,17 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    Person.findById(request.params.id).then(person => {
-        response.json(person)
+    Person.findById(request.params.id)
+    .then(person => {
+        if (person) {
+            response.json(person)
+        } else {
+            response.status(404).end()
+        }
+    })
+    .catch(error => {
+        console.log(error)
+        response.status(500).end()
     })
 })
 
@@ -58,11 +67,15 @@ app.put('/api/persons/:id', (request, response) => {
     })
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-  
-    phonebook = phonebook.filter(person => person.id !== id)
-    response.status(204).end()
+app.delete('/api/persons/:id', (request, response) => {  
+    Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+        if (result)
+            response.status(204).end()
+        else
+            response.status(404).end()
+    })
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
